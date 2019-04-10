@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<prerequisites>
+		<maven>3.0.0</maven>
+	</prerequisites>
+	<groupId>org.sunbird</groupId>
+	<artifactId>lms.jobs</artifactId>
+	<version>0.0.1</version>
+	<packaging>pom</packaging>
+	<name>sunbird lms jobs</name>
+	<description>
+    	Sunbird lms jobs
+  	</description>
+	<modules>
+		<module>elastic-indexer</module>
+	</modules>
+
+	<properties>
+		<!-- maven specific properties -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<samza.version>0.14.0</samza.version>
+		<kafka.version>1.1.0</kafka.version>
+		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
+		<samza.log.dir>/tmp</samza.log.dir>
+		<samza.container.name>test-container</samza.container.name>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>my-local-repo</id>
+			<url>file://${user.home}/.m2/repository</url>
+		</repository>
+		<repository>
+			<id>apache-releases</id>
+			<url>https://repository.apache.org/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>https://oss.sonatype.org/content/groups/scala-tools</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+</project>
