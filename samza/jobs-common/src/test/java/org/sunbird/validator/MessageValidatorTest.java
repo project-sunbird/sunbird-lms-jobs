@@ -112,7 +112,7 @@ public class MessageValidatorTest {
   private Map<String, Object> createMessageMap() {
     Map<String, Object> messageMap = new HashMap<>();
 
-    messageMap.put(Constants.IDENTIFIER, "1234567");
+    messageMap.put(Constants.IDENTIFIER, "12345678");
     messageMap.put(Constants.OPERATION_TYPE, Constants.UPSERT);
     messageMap.put(Constants.EVENT_TYPE, Message.TRANSACTIONAL);
     messageMap.put(Constants.OBJECT_TYPE, Constants.LOCATION);
@@ -123,7 +123,7 @@ public class MessageValidatorTest {
     Map<String, Object> id = new HashMap<>();
     
     name.put(Constants.NV, "BLR");
-    id.put(Constants.NV, "1234567");
+    id.put(Constants.NV, "12345678");
     properties.put("name", name);
     properties.put("id", id);
     event.put("properties", properties);
