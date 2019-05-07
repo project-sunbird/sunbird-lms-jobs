@@ -22,7 +22,7 @@ public class MessageCreatorTest {
   private Map<String, Object> createMessageMap() {
     Map<String, Object> messageMap = new HashMap<>();
 
-    messageMap.put(Constants.IDENTIFIER, "123456");
+    messageMap.put(Constants.IDENTIFIER, "1234567");
     messageMap.put(Constants.OPERATION_TYPE, Constants.UPSERT);
     messageMap.put(Constants.EVENT_TYPE, Message.TRANSACTIONAL);
     messageMap.put(Constants.OBJECT_TYPE, Constants.LOCATION);
