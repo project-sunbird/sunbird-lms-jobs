@@ -41,5 +41,6 @@ public class IndexerTask implements StreamTask, InitableTask {
   @Override
   public void init(Config config, TaskContext taskContext) throws Exception {
     ProjectLogger.log("IndexerTask:init: config = " + config.toString(), LoggerEnum.INFO);
+    service.load(config);
   }
 }

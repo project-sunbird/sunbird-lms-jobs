@@ -72,7 +72,7 @@
   replace: dest="{{item[1].stdout}}" regexp="{{item[0].key}}" replace="{{item[0].value}}"
   when: "{{item[1]|changed}}"
   with_nested:
-    - [{key: "__yarn_host__", value: "{{__yarn_host__}}"}, {key: "__yarn_port__", value: "{{__yarn_port__}}"}, {key: "__env__", value: "{{env}}" }, {key: "__zookeepers__", value: "{{zookeepers}}"}, {key: "__kafka_brokers__", value: "{{kafka_brokers}}"}]
+    - [{key: "__yarn_host__", value: "{{__yarn_host__}}"}, {key: "__yarn_port__", value: "{{__yarn_port__}}"}, {key: "__env__", value: "{{env_name}}" }, {key: "__zookeepers__", value: "{{zookeepers}}"}, {key: "__kafka_brokers__", value: "{{kafka_brokers}}"}, {key: "__lms_host__", value: "{{__lms_host__}}"}, {key: "__lms_es_port__", value: "{{lms_es_port}}"}, {key: "__lms_es_host__", value: "{{lms_es_host}}"}]
     - "{{ (config_files|default({})).results|default([]) }}"
 
 - name: Update status of new jobs in file

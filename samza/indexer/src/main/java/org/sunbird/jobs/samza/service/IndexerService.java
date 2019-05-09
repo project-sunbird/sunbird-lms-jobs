@@ -1,18 +1,18 @@
 package org.sunbird.jobs.samza.service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.samza.config.Config;
 import org.sunbird.common.ElasticSearchUtil;
 import org.sunbird.common.models.util.JsonKey;
 import org.sunbird.common.models.util.LoggerEnum;
 import org.sunbird.common.models.util.ProjectLogger;
 import org.sunbird.common.models.util.ProjectUtil;
+import org.sunbird.common.models.util.PropertiesCache;
+import org.sunbird.jobs.samza.util.JSONUtils;
 import org.sunbird.models.Constants;
 import org.sunbird.models.Message;
 import org.sunbird.models.MessageCreator;
@@ -32,17 +32,29 @@ public class IndexerService {
   private static com.typesafe.config.Config config = null;
   private static Map<String, String> properties = null;
   private static ObjectMapper mapper = null;
+  private Config appConfig = null;
 
   public IndexerService() {
     messageCreator = new MessageCreator();
     messageValidator = new MessageValidator();
-    config = ConfigFactory.parseResources(confFile);
     mapper = new ObjectMapper();
     initProps();
     ProjectLogger.log("IndexerService is intialised", LoggerEnum.INFO);
   }
 
+  public void load(Config config) {
+    JSONUtils.loadProperties(config);
+    appConfig = config;
+    ProjectUtil.propertiesCache.saveConfigProperty((JsonKey.SUNBIRD_ES_CLUSTER),
+        appConfig.get(JsonKey.SUNBIRD_ES_CLUSTER));
+    ProjectUtil.propertiesCache.saveConfigProperty((JsonKey.SUNBIRD_ES_IP),
+        appConfig.get(JsonKey.SUNBIRD_ES_IP));
+    ProjectUtil.propertiesCache.saveConfigProperty((JsonKey.SUNBIRD_ES_PORT),
+        appConfig.get(JsonKey.SUNBIRD_ES_PORT));
+  }
+
   private void initProps() {
+    config = ConfigFactory.parseResources(confFile);
     properties = new HashMap<>();
     Set<Entry<String, ConfigValue>> configSet = config.entrySet();
     for (Entry<String, ConfigValue> confEntry : configSet) {

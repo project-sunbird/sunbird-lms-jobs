@@ -1,6 +1,6 @@
 ---
-samza_jobs_dir: /home/hduser/samza-jobs/{{env}}
-job_status_file: /home/hduser/samza-jobs/{{env}}/extract/job_status
+samza_jobs_dir: /home/hduser/samza-jobs/{{env_name}}
+job_status_file: /home/hduser/samza-jobs/{{env_name}}/extract/job_status
 yarn_path: /usr/local/hadoop/bin
 hadoop_version: 2.7.2
 __yarn_port__: 8000

@@ -10,13 +10,14 @@ import org.sunbird.jobs.samza.common.ResponseCode;
 import org.sunbird.jobs.samza.util.JobLogger;
 import org.sunbird.jobs.samza.util.JSONUtils;
 import org.sunbird.jobs.samza.util.SSOAccountUpdaterParams;
+import org.sunbird.jobs.samza.util.SearchUtil;
+import org.sunbird.jobs.samza.util.SSOAccountUpdaterMessageValidator;
 
 import okhttp3.OkHttpClient;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.sunbird.jobs.samza.util.SearchUtil;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.util.ArrayList;
@@ -31,16 +32,28 @@ public class SSOAccountUpdaterService {
     private Config appConfig = null;
     private OkHttpClient client = new OkHttpClient();
     private ObjectMapper mapper = new ObjectMapper();
+    private SSOAccountUpdaterMessageValidator validator = null;
+    private String[] mandatoryParams = null;
 
     public void initialize(Config config) throws Exception {
         JSONUtils.loadProperties(config);
         appConfig = config;
+        validator = new SSOAccountUpdaterMessageValidator();
+        mandatoryParams = new String[]{
+                SSOAccountUpdaterParams.userExternalId.name(),
+                SSOAccountUpdaterParams.nameFromPayload.name(),
+                SSOAccountUpdaterParams.channel.name(),
+                SSOAccountUpdaterParams.orgExternalId.name(),
+                SSOAccountUpdaterParams.userId.name(),
+                SSOAccountUpdaterParams.firstName.name()};
         Logger.info("SSOAccountUpdaterService:initialize: Service config initialized");
     }
 
     public void processMessage(Map<String, Object> message) throws Exception {
 
         Map<String, Object> eventMap = (Map<String, Object>) message.get(SSOAccountUpdaterParams.event.name());
+
+        validator.validateMessage(eventMap, mandatoryParams);
 
         String userId = (String) eventMap.get(SSOAccountUpdaterParams.userId.name());
         String channel = (String) eventMap.get(SSOAccountUpdaterParams.channel.name());
@@ -93,8 +106,7 @@ public class SSOAccountUpdaterService {
         Map<String, Object> responseMap = SearchUtil.search(orgSearchRequest, appConfig.get(SSOAccountUpdaterParams.lms_host.name()) + appConfig.get(SSOAccountUpdaterParams.org_search_api.name()));
 
         if (MapUtils.isNotEmpty(responseMap)) {
-            Double dCount = (Double) responseMap.get(SSOAccountUpdaterParams.count.name());
-            int count = dCount.intValue();
+            int count = (int) responseMap.get(SSOAccountUpdaterParams.count.name());
             if (0 != count) {
                 List<Map<String, Object>> orgs = (List<Map<String, Object>>) responseMap.get(SSOAccountUpdaterParams.content.name());
                 return orgs.get(0);

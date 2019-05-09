@@ -6,6 +6,7 @@ import org.sunbird.common.models.util.JsonKey;
 public enum ResponseCode {
     unAuthorized(ResponseMessage.Key.UNAUTHORIZED_USER, ResponseMessage.Message.UNAUTHORIZED_USER),
     invalidOrgData(ResponseMessage.Key.INVALID_ORG_DATA, ResponseMessage.Message.INVALID_ORG_DATA),
+    mandatoryParamsMissing(ResponseMessage.Key.MANDATORY_PARAMETER_MISSING, ResponseMessage.Message.MANDATORY_PARAMETER_MISSING),
 
     OK(200),
     CLIENT_ERROR(400),
