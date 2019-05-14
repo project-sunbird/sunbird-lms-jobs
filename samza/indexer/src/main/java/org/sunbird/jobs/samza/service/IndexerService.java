@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.samza.config.Config;
 import org.sunbird.common.ElasticSearchUtil;
 import org.sunbird.common.models.util.JsonKey;
@@ -83,56 +84,48 @@ public class IndexerService {
   }
 
   private Map<String, Object> prepareData(Message message, String type) {
+    String updatePath = getPath(message.getObjectType());
     Map<String, Object> data = null;
-    if (JsonKey.USER.equalsIgnoreCase(type)) {
-      data = prepareUserData(message);
-    } else {
+    Map<String, Object> dbData = message.getProperties();
+    if (StringUtils.isEmpty(updatePath)) {
       data = message.getProperties();
+    } else {
+      String key = getKey(message.getObjectType());
+      String indexType = getIndex(message.getObjectType());
+      if(null != key &&  null != indexType) {
+        String id = (String) message.getProperties().get(key);
+        Map<String, Object> esMap = ElasticSearchUtil.getDataByIdentifier(INDEX, indexType, id);
+        data = updateNestedData(dbData, esMap,updatePath,Constants.ID, message.getOperationType(), message.getObjectType());
+      }
+      
     }
     return data;
   }
 
-  private Map<String, Object> prepareUserData(Message message) {
-    Map<String, Object> data = null;
-    data = message.getProperties();
-    if (message.getObjectType().equals(JsonKey.USER)) {
-      return data;
-    } else {
-      String objectType = message.getObjectType();
-      String userId = (String) data.get(Constants.USER_ID);
-      Map<String, Object> esMap = ElasticSearchUtil.getDataByIdentifier(INDEX, JsonKey.USER, userId);
-      if (objectType.equalsIgnoreCase(Constants.USER_EDUCATION)) {
-        data = updateNestedData(data, esMap, JsonKey.EDUCATION, Constants.ID, message.getOperationType());
-      } else if (objectType.equalsIgnoreCase(Constants.USER_JOB_PROFILE)) {
-        data = updateNestedData(data, esMap, JsonKey.JOB_PROFILE, Constants.ID, message.getOperationType());
-      } else if (objectType.equalsIgnoreCase(Constants.USER_ORG)) {
-        data = updateNestedData(data, esMap, JsonKey.ORGANISATIONS, Constants.ID, message.getOperationType());
-      } else if (objectType.equalsIgnoreCase(Constants.USER_BADGE_ASSERTION)) {
-        esMap.put(JsonKey.BADGE_ASSERTIONS, data);
-        data = esMap;
-      } else if (objectType.equalsIgnoreCase(Constants.USER_SKILLS)) {
-        data = updateNestedData(data, esMap, JsonKey.SKILLS, Constants.ID, message.getOperationType());
-      }
-    }
-    return data;
-  }
+  
 
   @SuppressWarnings("unchecked")
   public Map<String, Object> updateNestedData(Map<String, Object> data, Map<String, Object> esMap, String attribute,
-      String key, String operationType) {
-    if (esMap.get(attribute) != null) {
-      boolean isAlreadyPresent = updateIfAlreadyExist((List) esMap.get(attribute), data, attribute, key, operationType);
-      if (!isAlreadyPresent) {
-        ((List) esMap.get(attribute)).add(data);
+      String key, String operationType, String objectType) {
+    if (isNested(objectType)) {
+      if (esMap.get(attribute) != null) {
+        boolean isAlreadyPresent = updateIfAlreadyExist((List) esMap.get(attribute), data, attribute, key,
+            operationType);
+        if (!isAlreadyPresent) {
+          ((List) esMap.get(attribute)).add(data);
+        }
+      } else {
+        List<Map<String, Object>> list = new ArrayList<>();
+        list.add(data);
+        esMap.put(attribute, list);
+        data = esMap;
       }
     } else {
-      List<Map<String, Object>> list = new ArrayList<>();
-      list.add(data);
-      esMap.put(attribute, list);
-      data = esMap;
+      esMap.put(attribute, data);
     }
     return data;
   }
+  
   private boolean updateIfAlreadyExist(List<Map<String, Object>> esDataList, Map<String, Object> data, String attribute,
       String id, String operationType) {
     for (Map<String, Object> esData : esDataList) {
@@ -163,5 +156,20 @@ public class IndexerService {
       return properties.get(key);
     }
     return null;
+  }
+
+  private String getPath(String objectType) {
+    String key = objectType + Constants.DOT + Constants.PATH;
+    if (properties.containsKey(key)) {
+      return properties.get(key);
+    }
+    return null;
+  }
+  private boolean isNested(String objectType) {
+    String key = objectType + Constants.DOT + Constants.IS_NESTED;
+    if (properties.containsKey(key)) {
+      return Boolean.parseBoolean(properties.get(key));
+    }
+    return false;
   }
 }

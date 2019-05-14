@@ -26,5 +26,7 @@ public final class Constants {
   public static final String USER_ORG = "user_org";
   public static final String USER_BADGE_ASSERTION = "user_badge_assertion";
   public static final String USER_SKILLS = "user_skills";
+  public static final String PATH = "path";
+  public static final String IS_NESTED = "isNested";
 
 }
