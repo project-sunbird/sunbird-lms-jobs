@@ -103,7 +103,6 @@ public class IndexerService {
   }
 
   
-
   @SuppressWarnings("unchecked")
   public Map<String, Object> updateNestedData(Map<String, Object> data, Map<String, Object> esMap, String attribute,
       String key, String operationType, String objectType) {
@@ -125,13 +124,12 @@ public class IndexerService {
     }
     return data;
   }
-  
+
   private boolean updateIfAlreadyExist(List<Map<String, Object>> esDataList, Map<String, Object> data, String attribute,
       String id, String operationType) {
     for (Map<String, Object> esData : esDataList) {
       if (esData.get(id).equals(data.get(id))) {
-        if (operationType.equalsIgnoreCase(Constants.DELETE)
-            || (data.get(JsonKey.IS_DELETED) != null && (boolean) data.get(JsonKey.IS_DELETED))) {
+        if ((data.get(JsonKey.IS_DELETED) != null && (boolean) data.get(JsonKey.IS_DELETED))) {
           esDataList.remove(esData);
         } else {
           esData = data;
