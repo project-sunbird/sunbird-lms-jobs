@@ -21,5 +21,10 @@ public final class Constants {
   public static final String DOT = ".";
   public static final String ORGANISATION = "organisation";
   public static final String ORG = "org";
+  public static final String USER_EDUCATION = "user_education";
+  public static final String USER_JOB_PROFILE = "user_job_profile";
+  public static final String USER_ORG = "user_org";
+  public static final String USER_BADGE_ASSERTION = "user_badge_assertion";
+  public static final String USER_SKILLS = "user_skills";
 
 }
