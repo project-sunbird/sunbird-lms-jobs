@@ -27,8 +27,11 @@ node() {
         }
 
             stage('Build') {
-                sh ("cd samza && mvn clean install")
-            }
+                            sh """
+                            git submodule update --init --recursive --remote
+                            cd samza && mvn clean install
+                            """
+                        }
 
             stage('Archive artifacts'){
                 sh """
