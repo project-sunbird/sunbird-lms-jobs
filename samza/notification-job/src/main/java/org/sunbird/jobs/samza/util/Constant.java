@@ -25,4 +25,5 @@ public class Constant {
   public static final String TOPIC = "topic";
   public static final String TEMPLATE = "template";
   public static final String DATA = "data";
+  public static final String MID = "mid";
 }
