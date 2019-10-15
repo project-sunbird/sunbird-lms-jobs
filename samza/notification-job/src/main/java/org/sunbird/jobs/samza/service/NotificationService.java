@@ -37,8 +37,6 @@ public class NotificationService {
 	private JobLogger Logger = new JobLogger(NotificationService.class);
 	private Config appConfig = null;
 	private String accountKey = null;
-	private String smsAuthKey = null;
-	private String smsDefaultSender = null;
 	private ISmsProvider smsProvider = null;
 	private IEmailFactory emailFactory = null;
 	private IEmailService emailService = null;
@@ -49,9 +47,8 @@ public class NotificationService {
 		JSONUtils.loadProperties(config);
 		appConfig = config;
 		accountKey = appConfig.get(NotificationEnum.fcm_account_key.name());
-		smsAuthKey = appConfig.get(NotificationEnum.sms_auth_key.name());
-		smsDefaultSender = appConfig.get(NotificationEnum.sms_default_sender.name());
-		SMSConfig smsConfig = new SMSConfig(smsAuthKey, smsDefaultSender);
+		SMSConfig smsConfig = new SMSConfig(
+						NotificationEnum.sms_auth_key.name(), NotificationEnum.sms_default_sender.name());
 		smsProvider = SMSFactory.getInstance("91SMS", smsConfig);
 		emailFactory = new IEmailProviderFactory();
 		emailService = emailFactory.create(
@@ -102,21 +99,21 @@ public class NotificationService {
 	}
 
 	private boolean sendEmailNotification(Map<String, Object> notificationMap) {
-		List<String> deviceIds = (List<String>) notificationMap.get(Constant.IDS);
+		List<String> emailIds = (List<String>) notificationMap.get(Constant.IDS);
 		Map<String, Object> templateMap = (Map<String, Object>) notificationMap.get(Constant.TEMPLATE);
 		Map<String, Object> config =  (Map<String, Object>) notificationMap.get(Constant.CONFIG);
 		String subject = (String) config.get(Constant.SUBJECT);
 		String emailText = (String) templateMap.get(Constant.DATA);
-		EmailRequest emailRequest = new EmailRequest(subject, deviceIds,null,null,"", emailText,null);
+		EmailRequest emailRequest = new EmailRequest(subject, emailIds,null,null,"", emailText,null);
 		return emailService.sendEmail(emailRequest);
 	}
 
 	private boolean sendSmsNotification(Map<String, Object> notificationMap, String msgId) {
-		List<String> deviceIds = (List<String>) notificationMap.get(Constant.IDS);
-		if (deviceIds != null) {
+		List<String> mobileNumbers = (List<String>) notificationMap.get(Constant.IDS);
+		if (mobileNumbers != null) {
 			Map<String, Object> templateMap = (Map<String, Object>) notificationMap.get(Constant.TEMPLATE);
 			String smsText = (String) templateMap.get(Constant.DATA);
-			return smsProvider.bulkSms(deviceIds, smsText);
+			return smsProvider.bulkSms(mobileNumbers, smsText);
 		} else {
 			Logger.info("mobile numbers not provided for message id:"+msgId);
 			return true;
