@@ -9,7 +9,13 @@ import org.apache.samza.config.Config;
 import org.sunbird.common.models.util.datasecurity.OneWayHashing;
 import org.sunbird.jobs.samza.util.JSONUtils;
 import org.sunbird.jobs.samza.util.JobLogger;
+import org.sunbird.jobs.samza.util.NotificationEnum;
+import org.sunbird.notification.beans.EmailConfig;
+import org.sunbird.notification.beans.EmailRequest;
 import org.sunbird.notification.beans.SMSConfig;
+import org.sunbird.notification.email.service.IEmailFactory;
+import org.sunbird.notification.email.service.IEmailService;
+import org.sunbird.notification.email.service.impl.IEmailProviderFactory;
 import org.sunbird.notification.fcm.provider.IFCMNotificationService;
 import org.sunbird.notification.fcm.provider.NotificationFactory;
 import org.sunbird.notification.fcm.providerImpl.FCMHttpNotificationServiceImpl;
@@ -31,24 +37,26 @@ public class NotificationService {
 	private JobLogger Logger = new JobLogger(NotificationService.class);
 	private Config appConfig = null;
 	private String accountKey = null;
-	private String msgAuthKey = null;
 	private ISmsProvider smsProvider = null;
-	private String[] mandatoryParams = null;
+	private IEmailFactory emailFactory = null;
+	private IEmailService emailService = null;
 	private IFCMNotificationService ifcmNotificationService = NotificationFactory
 			.getInstance(NotificationFactory.instanceType.httpClinet.name());
-	private static final String FCM_ACCOUNT_KEY = "fcm_account_key";
-	private static final String MSG_AUTH_KEY = "msg_auth_key";
 
 	public void initialize(Config config) throws Exception {
 		JSONUtils.loadProperties(config);
 		appConfig = config;
-		mandatoryParams = new String[]{
-						Constant.ACTION_NAME, Constant.IDS, Constant.EDATA
-		};
-		accountKey = appConfig.get(FCM_ACCOUNT_KEY);
-		msgAuthKey = appConfig.get(MSG_AUTH_KEY);
-		SMSConfig smsConfig = new SMSConfig(msgAuthKey, "");
+		accountKey = appConfig.get(NotificationEnum.fcm_account_key.name());
+		SMSConfig smsConfig = new SMSConfig(
+						NotificationEnum.sms_auth_key.name(), NotificationEnum.sms_default_sender.name());
 		smsProvider = SMSFactory.getInstance("91SMS", smsConfig);
+		emailFactory = new IEmailProviderFactory();
+		emailService = emailFactory.create(
+		        new EmailConfig(appConfig.get(NotificationEnum.mail_server_from_email.name()),
+										appConfig.get(NotificationEnum.mail_server_username.name()),
+                    appConfig.get(NotificationEnum.mail_server_password.name()),
+										appConfig.get(NotificationEnum.mail_server_host.name()),
+										appConfig.get(NotificationEnum.mail_server_port.name())));
 		Logger.info("NotificationService:initialize: Service config initialized");
 	}
 
@@ -56,15 +64,12 @@ public class NotificationService {
 		Logger.info("Account key:"+ accountKey);
 		FCMHttpNotificationServiceImpl.setAccountKey(accountKey);
 		String msgId = (String) message.get(Constant.MID);
-		Map<String, Object> validationMap = null;
-		Map<String, String> dataMap = new HashMap<String, String>();
 		Map<String, Object> edataMap = (Map<String, Object>) message.get(Constant.EDATA);
 		Map<String, Object> objectMap = (Map<String, Object>) message.get(Constant.OBJECT);
 		String requestHash = "";
 		boolean isSuccess = false;
 		if (edataMap != null && edataMap.size() > 0) {
 			String actionValue = (String) edataMap.get(Constant.ACTION);
-			validationMap.put(Constant.ACTION, actionValue);
 			if (Constant.ACTION_NAME.equalsIgnoreCase(actionValue)) {
 				Map<String, Object> requestMap = (Map<String, Object>) edataMap.get(Constant.REQUEST);
 				requestHash = OneWayHashing.encryptVal(mapper.writeValueAsString(requestMap));
@@ -72,31 +77,43 @@ public class NotificationService {
 					Logger.info("NotificationService:processMessage: hashValue is not matching - " + requestHash);
 				} else {
 					Map<String, Object> notificationMap = (Map<String, Object>) requestMap.get(Constant.NOTIFICATION);
-					if(notificationMap.get(Constant.MODE).equals("phone")) {
+					if(notificationMap.get(Constant.MODE).equals(NotificationEnum.phone.name())) {
 						isSuccess = sendSmsNotification(notificationMap, msgId);
-					} else if(notificationMap.get(Constant.MODE).equals("device")){
+					} else if(notificationMap.get(Constant.MODE).equals(NotificationEnum.email.name())){
+						isSuccess = sendEmailNotification(notificationMap);
+					} else if(notificationMap.get(Constant.MODE).equals(NotificationEnum.device.name())) {
 						isSuccess = notifyDevice(notificationMap);
 					}
 					if (isSuccess) {
-						Logger.info("Notification sent to device successfully.");
+						Logger.info("Notification sent successfully.");
 					} else {
 						Logger.info("Notification sent failure");
 					}
 				}
 			} else {
-				Logger.info("NotificationService:processMessage action name is incorrect: " + actionValue);
+				Logger.info("NotificationService:processMessage action name is incorrect: " + actionValue + "for message id:"+msgId);
 			}
 		} else {
-			Logger.info("NotificationService:processMessage event data map is either null or empty");
+			Logger.info("NotificationService:processMessage event data map is either null or empty for message id:"+msgId);
 		}
 	}
 
+	private boolean sendEmailNotification(Map<String, Object> notificationMap) {
+		List<String> emailIds = (List<String>) notificationMap.get(Constant.IDS);
+		Map<String, Object> templateMap = (Map<String, Object>) notificationMap.get(Constant.TEMPLATE);
+		Map<String, Object> config =  (Map<String, Object>) notificationMap.get(Constant.CONFIG);
+		String subject = (String) config.get(Constant.SUBJECT);
+		String emailText = (String) templateMap.get(Constant.DATA);
+		EmailRequest emailRequest = new EmailRequest(subject, emailIds,null,null,"", emailText,null);
+		return emailService.sendEmail(emailRequest);
+	}
+
 	private boolean sendSmsNotification(Map<String, Object> notificationMap, String msgId) {
-		List<String> deviceIds = (List<String>) notificationMap.get(Constant.IDS);
-		if (deviceIds != null) {
+		List<String> mobileNumbers = (List<String>) notificationMap.get(Constant.IDS);
+		if (mobileNumbers != null) {
 			Map<String, Object> templateMap = (Map<String, Object>) notificationMap.get(Constant.TEMPLATE);
 			String smsText = (String) templateMap.get(Constant.DATA);
-			return smsProvider.bulkSms(deviceIds, smsText);
+			return smsProvider.bulkSms(mobileNumbers, smsText);
 		} else {
 			Logger.info("mobile numbers not provided for message id:"+msgId);
 			return true;
@@ -111,7 +128,6 @@ public class NotificationService {
 		dataMap.put(Constant.RAW_DATA, mapper.writeValueAsString(notificationMap.get(Constant.RAW_DATA)));
 		Logger.info("NotificationService:processMessage: calling send notification ");
 		if (deviceIds != null ) {
-			//return batchNotifyDevice(deviceIds, dataMap);
 			response = ifcmNotificationService.sendMultiDeviceNotification(deviceIds, dataMap, false);
 		} else {
 			Map<String, Object> configMap = (Map<String, Object>) notificationMap.get(Constant.CONFIG);
