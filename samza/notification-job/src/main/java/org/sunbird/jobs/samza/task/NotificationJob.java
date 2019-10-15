@@ -41,7 +41,7 @@ public class NotificationJob implements StreamTask, InitableTask {
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
         Map<String, Object> message = getMessage(envelope);
         try {
-            service.processMessage(message);
+            service.processMessage(message, collector);
         } catch (ProjectCommonException e) {
             Logger.error("NotificationJob:process: Error while processing message", message, e);
         } catch (Exception e) {

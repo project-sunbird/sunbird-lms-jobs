@@ -6,6 +6,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.samza.config.Config;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
+import org.apache.samza.task.MessageCollector;
 import org.sunbird.common.models.util.datasecurity.OneWayHashing;
 import org.sunbird.jobs.samza.util.JSONUtils;
 import org.sunbird.jobs.samza.util.JobLogger;
@@ -42,6 +45,8 @@ public class NotificationService {
 	private IEmailService emailService = null;
 	private IFCMNotificationService ifcmNotificationService = NotificationFactory
 			.getInstance(NotificationFactory.instanceType.httpClinet.name());
+	private int maxIterations = 0;
+	private static int MAXITERTIONCOUNT = 2;
 
 	public void initialize(Config config) throws Exception {
 		JSONUtils.loadProperties(config);
@@ -57,10 +62,11 @@ public class NotificationService {
                     appConfig.get(NotificationEnum.mail_server_password.name()),
 										appConfig.get(NotificationEnum.mail_server_host.name()),
 										appConfig.get(NotificationEnum.mail_server_port.name())));
+		maxIterations = getMaxIterations();
 		Logger.info("NotificationService:initialize: Service config initialized");
 	}
 
-	public void processMessage(Map<String, Object> message) throws Exception {
+	public void processMessage(Map<String, Object> message, MessageCollector collector) throws Exception {
 		Logger.info("Account key:"+ accountKey);
 		FCMHttpNotificationServiceImpl.setAccountKey(accountKey);
 		String msgId = (String) message.get(Constant.MID);
@@ -88,6 +94,7 @@ public class NotificationService {
 						Logger.info("Notification sent successfully.");
 					} else {
 						Logger.info("Notification sent failure");
+						handleFailureMessage(message, edataMap, collector);
 					}
 				}
 			} else {
@@ -96,6 +103,26 @@ public class NotificationService {
 		} else {
 			Logger.info("NotificationService:processMessage event data map is either null or empty for message id:"+msgId);
 		}
+	}
+
+	private void handleFailureMessage(Map<String, Object> message, Map<String, Object> edata, MessageCollector collector) {
+		Logger.info("NotificationService:handleFailureMessage started");
+		int iteration = (int) edata.get(NotificationEnum.iteration.name());
+		if(iteration < maxIterations) {
+			((Map<String, Object>) message.get(Constant.EDATA)).put(NotificationEnum.iteration.name(), iteration+1);
+			collector.send(new OutgoingMessageEnvelope(
+							new SystemStream(
+											NotificationEnum.kafka.name(), appConfig.get("kafka.retry.topic")), message
+			));
+		}
+	}
+
+	protected int getMaxIterations() {
+		maxIterations = appConfig.getInt("max.iteration.count.samza.job");
+		if(maxIterations==0) {
+			maxIterations = MAXITERTIONCOUNT;
+		}
+		return maxIterations;
 	}
 
 	private boolean sendEmailNotification(Map<String, Object> notificationMap) {
