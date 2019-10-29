@@ -53,7 +53,7 @@ public class NotificationService {
 		appConfig = config;
 		accountKey = appConfig.get(NotificationEnum.fcm_account_key.name());
 		SMSConfig smsConfig = new SMSConfig(
-						NotificationEnum.sms_auth_key.name(), NotificationEnum.sms_default_sender.name());
+						appConfig.get(NotificationEnum.sms_auth_key.name()), appConfig.get(NotificationEnum.sms_default_sender.name()));
 		smsProvider = SMSFactory.getInstance("91SMS", smsConfig);
 		emailFactory = new IEmailProviderFactory();
 		emailService = emailFactory.create(
