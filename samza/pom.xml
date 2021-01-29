@@ -29,8 +29,6 @@
     <modules>
         <module>jobs-common</module>
         <module>indexer</module>
-        <module>sso-account-updater</module>
-        <module>user-cert-merge</module>
         <module>distribution</module>
         <module>notification-job</module>
     </modules>
