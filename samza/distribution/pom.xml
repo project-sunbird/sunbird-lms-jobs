@@ -16,20 +16,6 @@
 			<type>tar.gz</type>
 			<classifier>distribution</classifier>
 		</dependency>
-		<dependency>
-			<groupId>org.sunbird.lms.jobs.samza</groupId>
-			<artifactId>sso-account-updater</artifactId>
-			<version>0.0.2</version>
-			<type>tar.gz</type>
-			<classifier>distribution</classifier>
-		</dependency>
-        <dependency>
-            <groupId>org.sunbird.lms.jobs.samza</groupId>
-            <artifactId>user-account-merger</artifactId>
-            <version>0.0.4</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
         <dependency>
             <groupId>org.sunbird.lms.jobs.samza</groupId>
             <artifactId>notification-job</artifactId>
