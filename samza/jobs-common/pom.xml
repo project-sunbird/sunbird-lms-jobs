@@ -138,13 +138,13 @@
 			<version>3.12.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/jdk.tools/jdk.tools -->
-		<dependency>
+		<!--<dependency>
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>
 			<scope>system</scope>
 			<version>1.6</version>
 			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 
 	<build>
