@@ -9,13 +9,6 @@
     <packaging>pom</packaging>
     <name>Distribution</name>
     <dependencies>
-		<dependency>
-			<groupId>org.sunbird.lms.jobs.samza</groupId>
-			<artifactId>indexer</artifactId>
-			<version>0.0.2</version>
-			<type>tar.gz</type>
-			<classifier>distribution</classifier>
-		</dependency>
         <dependency>
             <groupId>org.sunbird.lms.jobs.samza</groupId>
             <artifactId>notification-job</artifactId>

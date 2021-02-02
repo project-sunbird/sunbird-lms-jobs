@@ -16,7 +16,6 @@
     </properties>
 
     <modules>
-         <module>modules/sunbird-utils</module>
         <module>samza</module>
     </modules>
 
