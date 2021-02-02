@@ -5,8 +5,6 @@ jobs:
       image: ubuntu-2004:202008-01
     steps:
       - checkout
-      - run: git submodule update --init
-      - run: git submodule update --init --recursive --remote
       - restore_cache:
           key: lms-dependency-cache-{{ checksum "pom.xml" }}
       - run: mvn clean package -Dmaven.test.skip=true
