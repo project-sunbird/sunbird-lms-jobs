@@ -151,7 +151,7 @@
 		<profile>
 			<id>jigsaw</id>
 			<activation>
-				<jdk>[1.9,)</jdk>
+				<jdk>[1.11,)</jdk>
 			</activation>
 			<!-- No dependencies needed by Jigsaw -->
 			<dependencies/>
