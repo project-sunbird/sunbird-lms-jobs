@@ -160,7 +160,7 @@
 			<id>default-jdk</id>
 			<activation>
 				<file>
-					<exists>${java.home}/../lib/tools.jar</exists>
+					<exists>${JAVA_HOME}/lib/tools.jar</exists>
 				</file>
 			</activation>
 			<dependencies>
@@ -169,7 +169,7 @@
 					<artifactId>jdk.tools</artifactId>
 					<scope>system</scope>
 					<version>1.6</version>
-					<systemPath>${java.home}/../lib/tools.jar</systemPath>
+					<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
 				</dependency>
 			</dependencies>
 		</profile>
