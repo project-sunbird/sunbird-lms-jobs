@@ -165,8 +165,8 @@
 			</activation>
 			<dependencies>
 				<dependency>
-					<groupId>com.sun</groupId>
-					<artifactId>tools</artifactId>
+					<groupId>jdk.tools</groupId>
+					<artifactId>jdk.tools</artifactId>
 					<scope>system</scope>
 					<version>1.6</version>
 					<systemPath>${java.home}/../lib/tools.jar</systemPath>
