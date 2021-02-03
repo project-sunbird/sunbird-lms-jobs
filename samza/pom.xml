@@ -28,6 +28,7 @@
     <description>This project contains all the backend jobs of Sunbird Platform.</description>
 
     <modules>
+        <module>common-util</module>
         <module>jobs-common</module>
         <module>distribution</module>
         <module>notification-job</module>
