@@ -29,6 +29,7 @@
 
     <modules>
         <module>common-util</module>
+        <module>notification-sdk</module>
         <module>jobs-common</module>
         <module>distribution</module>
         <module>notification-job</module>
