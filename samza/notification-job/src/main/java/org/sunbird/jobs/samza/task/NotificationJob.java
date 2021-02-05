@@ -12,9 +12,9 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 
-import org.sunbird.common.exception.ProjectCommonException;
+import org.sunbird.exception.ProjectCommonException;
 import org.sunbird.jobs.samza.service.NotificationService;
-import org.sunbird.jobs.samza.util.JobLogger;
+import org.sunbird.jobs.samza.utils.JobLogger;
 
 /**
  * 
