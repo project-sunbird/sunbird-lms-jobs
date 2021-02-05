@@ -1,4 +1,4 @@
-package org.sunbird.jobs.samza.util;
+package org.sunbird.jobs.samza.utils;
 
 import java.text.MessageFormat;
 import java.util.Map;

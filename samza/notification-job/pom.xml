@@ -21,7 +21,7 @@
             <groupId>org.sunbird.lms.jobs</groupId>
             <artifactId>jobs-common</artifactId>
             <version>0.0.1</version>
-        </dependency>
+         </dependency>
         <dependency>
             <groupId>org.sunbird</groupId>
             <artifactId>notification-sdk</artifactId>

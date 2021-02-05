@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.sunbird.jobs.samza.util.PropertyReader;
+import org.sunbird.jobs.samza.utils.PropertyReader;
 
 public class MessageCreator {
   private static final PropertyReader propertiesCache = PropertyReader.getInstance();

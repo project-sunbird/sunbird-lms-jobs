@@ -1,4 +1,4 @@
-package org.sunbird.jobs.samza.util;
+package org.sunbird.jobs.samza.utils;
 
 /**
  * Helper class for String formatting operations.

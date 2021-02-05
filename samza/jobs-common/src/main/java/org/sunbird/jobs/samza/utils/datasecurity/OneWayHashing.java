@@ -1,6 +1,6 @@
-package org.sunbird.jobs.samza.util.datasecurity;
+package org.sunbird.jobs.samza.utils.datasecurity;
 
-import org.sunbird.jobs.samza.util.JobLogger;
+import org.sunbird.jobs.samza.utils.JobLogger;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

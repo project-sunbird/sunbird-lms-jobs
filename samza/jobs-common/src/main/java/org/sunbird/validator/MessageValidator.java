@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 import org.sunbird.exception.ProjectCommonException;
 import org.sunbird.jobs.samza.common.ResponseCode;
-import org.sunbird.jobs.samza.util.StringFormatter;
+import org.sunbird.jobs.samza.utils.StringFormatter;
 import org.sunbird.models.Message;
 import java.util.Map;
 
