@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.sunbird.common.models.util.JsonKey;
 import org.sunbird.jobs.samza.util.PropertyReader;
 
 public class MessageCreator {
@@ -24,7 +23,7 @@ public class MessageCreator {
     message.setProperties(getSimpleProperties(props));
 
     message.setObjectType((String) res.get(Constants.OBJECT_TYPE));
-    message.setUserId((String) res.get(JsonKey.USER_ID));
+    message.setUserId((String) res.get(Constants.USER_ID));
     message.setCreatedOn((String) res.get(Constants.CREATED_ON));
     return message;
   }

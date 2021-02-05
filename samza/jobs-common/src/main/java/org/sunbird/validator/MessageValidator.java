@@ -1,31 +1,32 @@
 package org.sunbird.validator;
 
 import java.text.MessageFormat;
+
+import org.sunbird.exception.ProjectCommonException;
+import org.sunbird.jobs.samza.util.StringFormatter;
 import org.sunbird.models.Message;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sunbird.common.exception.ProjectCommonException;
-import org.sunbird.common.models.util.StringFormatter;
-import org.sunbird.common.responsecode.ResponseCode;
 import org.sunbird.models.Constants;
+import org.sunbird.responsecode.ResponseCode;
 
 public class MessageValidator {
 
   public void validateMessage(Map<String, Object> message) {
 
-    validate(message, Constants.IDENTIFIER, ResponseCode.mandatoryParamsMissing);
-    validate(message, Constants.OBJECT_TYPE, ResponseCode.mandatoryParamsMissing);
-    validate(message, Constants.OPERATION_TYPE, ResponseCode.mandatoryParamsMissing);
-    validate(message, Constants.EVENT_TYPE, ResponseCode.mandatoryParamsMissing);
-    validateEvent(message, Constants.EVENT, ResponseCode.mandatoryParamsMissing);
+    validate(message, Constants.IDENTIFIER);
+    validate(message, Constants.OBJECT_TYPE);
+    validate(message, Constants.OPERATION_TYPE);
+    validate(message, Constants.EVENT_TYPE);
+    validateEvent(message, Constants.EVENT);
     validateEventType(message);
     validateOperationType(message);
   }
 
   @SuppressWarnings("unchecked")
-  private void validateEvent(Map<String, Object> message, String attribute, ResponseCode mandatoryparamsmissing) {
+  private void validateEvent(Map<String, Object> message, String attribute) {
     if (!message.containsKey(attribute) || (!(message.get(attribute) instanceof Map))
         || (!MapUtils.isNotEmpty((Map<String, Object>) message.get(attribute)))) {
       throw new ProjectCommonException(ResponseCode.mandatoryParamsMissing.getErrorCode(),
@@ -55,7 +56,7 @@ public class MessageValidator {
 
   }
 
-  public void validate(Map<String, Object> message, String attribute, ResponseCode responseCode) {
+  public void validate(Map<String, Object> message, String attribute) {
     if (!message.containsKey(attribute) || StringUtils.isBlank((String) message.get(attribute))) {
       throw new ProjectCommonException(ResponseCode.mandatoryParamsMissing.getErrorCode(),
           MessageFormat.format(ResponseCode.mandatoryParamsMissing.getErrorMessage(), attribute),
