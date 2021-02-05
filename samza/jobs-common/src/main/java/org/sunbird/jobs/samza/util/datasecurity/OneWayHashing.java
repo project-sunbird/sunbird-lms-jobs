@@ -1,4 +1,3 @@
-/** */
 package org.sunbird.jobs.samza.util.datasecurity;
 
 import org.sunbird.jobs.samza.util.JobLogger;
