@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.sunbird.common.models.util.CassandraPropertyReader;
 import org.sunbird.common.models.util.JsonKey;
+import org.sunbird.jobs.samza.util.PropertyReader;
 
 public class MessageCreator {
-  private static final CassandraPropertyReader propertiesCache = CassandraPropertyReader.getInstance();
+  private static final PropertyReader propertiesCache = PropertyReader.getInstance();
 
   @SuppressWarnings("unchecked")
   public Message getMessage(Map<String, Object> res) {

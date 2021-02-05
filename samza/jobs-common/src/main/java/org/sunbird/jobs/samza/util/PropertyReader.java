@@ -1,4 +1,4 @@
-package org.sunbird.common.models.util;
+package org.sunbird.jobs.samza.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,15 +9,15 @@ import java.util.Properties;
  *
  * @author Amit Kumar
  */
-public class CassandraPropertyReader {
-  private static LoggerUtil logger = new LoggerUtil(CassandraPropertyReader.class);
+public class PropertyReader {
+  private JobLogger logger = new JobLogger(PropertyReader.class);
 
   private final Properties properties = new Properties();
   private static final String file = "cassandratablecolumn.properties";
-  private static CassandraPropertyReader cassandraPropertyReader = null;
+  private static PropertyReader propertyReader = null;
 
   /** private default constructor */
-  private CassandraPropertyReader() {
+  private PropertyReader() {
     InputStream in = this.getClass().getClassLoader().getResourceAsStream(file);
     try {
       properties.load(in);
@@ -26,15 +26,15 @@ public class CassandraPropertyReader {
     }
   }
 
-  public static CassandraPropertyReader getInstance() {
-    if (null == cassandraPropertyReader) {
-      synchronized (CassandraPropertyReader.class) {
-        if (null == cassandraPropertyReader) {
-          cassandraPropertyReader = new CassandraPropertyReader();
+  public static PropertyReader getInstance() {
+    if (null == propertyReader) {
+      synchronized (PropertyReader.class) {
+        if (null == propertyReader) {
+          propertyReader = new PropertyReader();
         }
       }
     }
-    return cassandraPropertyReader;
+    return propertyReader;
   }
 
   /**
