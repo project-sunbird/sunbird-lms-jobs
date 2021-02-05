@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.sunbird.common.exception.ProjectCommonException;
-import org.sunbird.common.responsecode.ResponseCode;
+import org.sunbird.exception.ProjectCommonException;
+import org.sunbird.jobs.samza.common.ResponseCode;
 import org.sunbird.models.Constants;
 import org.sunbird.models.Message;
-import org.sunbird.validator.MessageValidator;
 
 import org.junit.Assert;
 

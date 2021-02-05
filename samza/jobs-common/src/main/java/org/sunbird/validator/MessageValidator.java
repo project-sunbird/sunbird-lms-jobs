@@ -3,6 +3,7 @@ package org.sunbird.validator;
 import java.text.MessageFormat;
 
 import org.sunbird.exception.ProjectCommonException;
+import org.sunbird.jobs.samza.common.ResponseCode;
 import org.sunbird.jobs.samza.util.StringFormatter;
 import org.sunbird.models.Message;
 import java.util.Map;
@@ -10,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.models.Constants;
-import org.sunbird.responsecode.ResponseCode;
 
 public class MessageValidator {
 

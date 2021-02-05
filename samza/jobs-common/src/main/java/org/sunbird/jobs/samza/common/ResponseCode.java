@@ -1,11 +1,12 @@
 package org.sunbird.jobs.samza.common;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sunbird.common.models.util.JsonKey;
+import org.sunbird.models.Constants;
 
 public enum ResponseCode {
     unAuthorized(ResponseMessage.Key.UNAUTHORIZED_USER, ResponseMessage.Message.UNAUTHORIZED_USER),
     invalidOrgData(ResponseMessage.Key.INVALID_ORG_DATA, ResponseMessage.Message.INVALID_ORG_DATA),
+    dataTypeError(ResponseMessage.Key.DATA_TYPE_ERROR, ResponseMessage.Message.DATA_TYPE_ERROR),
     mandatoryParamsMissing(ResponseMessage.Key.MANDATORY_PARAMETER_MISSING, ResponseMessage.Message.MANDATORY_PARAMETER_MISSING),
 
     OK(200),
@@ -96,7 +97,7 @@ public enum ResponseCode {
     public static ResponseCode getResponse(String errorCode) {
         if (StringUtils.isBlank(errorCode)) {
             return null;
-        } else if (JsonKey.UNAUTHORIZED.equals(errorCode)) {
+        } else if (Constants.UNAUTHORIZED.equals(errorCode)) {
             return ResponseCode.unAuthorized;
         } else {
             ResponseCode value = null;

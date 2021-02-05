@@ -16,6 +16,15 @@ public class ProjectCommonException extends RuntimeException {
   private String message;
   /** responseCode int ResponseCode. */
   private int responseCode;
+  
+  /**
+   * This code is for client to identify the error and based on that do the message localization.
+   *
+   * @return String
+   */
+  public String getCode() {
+    return code;
+  }
 
   /**
    * message for client in english.
